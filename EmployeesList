@@ -1,0 +1,45 @@
+package EmployeesList;
+public class EmployeesList {
+    private String name;
+    private String city;
+    private int experience;
+    private int salary;
+
+    public EmployeesList(String name, String city, int experience, int salary) {
+        this.name = name;
+        this.city = city;
+        this.experience = experience;
+        this.salary = salary;
+    }
+
+    // геттеры и сеттеры для всех свойств
+
+    @Override
+    public String toString() {
+        return "EmployeesList{" +
+                "name='" + name + '\'' +
+                ", city='" + city + '\'' +
+                ", experience=" + experience +
+                ", salary=" + salary +
+                '}';
+    }
+
+	public int getexperience() {
+		return experience;
+	}
+
+	public double getsalary() {
+		return salary;
+	}
+
+	public void setsalary(int salary) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int getAverageAge() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+} 
