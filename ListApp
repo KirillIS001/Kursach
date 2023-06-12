@@ -1,0 +1,181 @@
+package EmployeesList;
+import javax.swing.*;
+
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class ListApp extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+
+	private static final int MAX_OBJECTS = 12;
+
+    private List<EmployeesList> citys = new ArrayList<>();
+
+    public ListApp() {
+        setTitle("Employees List");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+
+        citys.add(new EmployeesList("Татьяна", "Владимир", 13, 27));
+        citys.add(new EmployeesList("Даниил", "Красноярск", 10, 29));
+        citys.add(new EmployeesList("Дарья", "Томск", 20, 35));
+        citys.add(new EmployeesList("Сергей", "Братск", 19, 26));
+        citys.add(new EmployeesList("Дмитрий", "Новосибирск", 31, 26));
+
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+
+        JMenu mainMenu = new JMenu("Main Menu");
+        menuBar.add(mainMenu);
+
+        JMenuItem showAllMenuItem = new JMenuItem("Show all objects");
+        mainMenu.add(showAllMenuItem);
+        showAllMenuItem.addActionListener(e -> showAllObjects());
+
+        JMenuItem exitMenuItem = new JMenuItem("Exit");
+        mainMenu.add(exitMenuItem);
+        exitMenuItem.addActionListener(e -> System.exit(0));
+
+        JMenuItem addMenuItem = new JMenuItem("Add object");
+        mainMenu.add(addMenuItem);
+        addMenuItem.addActionListener(e -> addObject());
+
+        JMenuItem deleteMenuItem = new JMenuItem("Delete object");
+        mainMenu.add(deleteMenuItem);
+        deleteMenuItem.addActionListener(e -> deleteObject());
+
+        JMenu sortMenu = new JMenu("Sort objects by");
+        mainMenu.add(sortMenu);
+
+        JMenuItem sortTitlesMenuItem = new JMenuItem("experience");
+        sortMenu.add(sortTitlesMenuItem);
+        sortTitlesMenuItem.addActionListener(e -> sortObjectsByTitles());
+
+        JMenuItem sortAgeMenuItem = new JMenuItem("salary");
+        sortMenu.add(sortAgeMenuItem);
+        sortAgeMenuItem.addActionListener(e -> sortObjectsByAge());
+
+        JMenu filterMenu = new JMenu("Filter objects by");
+        mainMenu.add(filterMenu);
+
+        JMenuItem filterTitlesMenuItem = new JMenuItem("Filter by exp");
+        filterMenu.add(filterTitlesMenuItem);
+        filterTitlesMenuItem.addActionListener(e -> filterObjectsByTitles());
+
+        JMenu transformMenu = new JMenu("Transform objects");
+        mainMenu.add(transformMenu);
+
+        JMenuItem transformAgeMenuItem = new JMenuItem("Transform salary");
+        transformMenu.add(transformAgeMenuItem);
+        transformAgeMenuItem.addActionListener(e -> transformObjects());
+    }
+
+    private void showAllObjects() {
+        StringBuilder sb = new StringBuilder();
+        for (EmployeesList city : citys) {
+            sb.append(city.toString()).append("\n");
+        }
+        JOptionPane.showMessageDialog(this, sb.toString(), "All objects", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void addObject() {
+        if (citys.size() >= MAX_OBJECTS) {
+            JOptionPane.showMessageDialog(this, "Maximum number of objects reached", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        JTextField nameField = new JTextField();
+        JTextField cityField = new JTextField();
+        JTextField titlesField = new JTextField();
+        JTextField ageField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Name:"));
+        panel.add(nameField);
+        panel.add(new JLabel("City:"));
+        panel.add(cityField);
+        panel.add(new JLabel("experience:"));
+        panel.add(titlesField);
+        panel.add(new JLabel("salary:"));
+        panel.add(ageField);
+
+            int result = JOptionPane.showConfirmDialog(this, panel, "Add object", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    String name = nameField.getText();
+                    String city = cityField.getText();
+                    int titles = Integer.parseInt(titlesField.getText());
+                    int age = Integer.parseInt(ageField.getText());
+
+                    EmployeesList citys1 = new EmployeesList(name, city, titles, age);
+                    citys.add(citys1);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid input", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+        private void deleteObject() {
+            Object[] options = citys.toArray();
+            Object selectedObject = JOptionPane.showInputDialog(this, "Select an object to delete:", "Delete object", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if (selectedObject != null) {
+                citys.remove(selectedObject);
+                JOptionPane.showMessageDialog(this, "Object deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+
+        private void sortObjectsByTitles() {
+            Collections.sort(citys, Comparator.comparingInt(EmployeesList::getexperience));
+            JOptionPane.showMessageDialog(this, "Objects sorted by experience", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        private void sortObjectsByAge() {
+            Collections.sort(citys, Comparator.comparingDouble(EmployeesList::getAverageAge));
+            JOptionPane.showMessageDialog(this, "Objects sorted by salary", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        private void filterObjectsByTitles() {
+            String input = JOptionPane.showInputDialog(this, "Enter minimum number exp:");
+            if (input != null) {
+                try {
+                    int minTitles = Integer.parseInt(input);
+                    List<EmployeesList> filteredcitys = new ArrayList<>();
+                    for (EmployeesList city : citys) {
+                        if (city.getexperience() >= minTitles) {
+                            filteredcitys.add(city);
+                        }
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    for (EmployeesList city : filteredcitys) {
+                        sb.append(city.toString()).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(this, sb.toString(), "citys with at least " + minTitles + " titles", JOptionPane.INFORMATION_MESSAGE);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid input", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+        private void transformObjects() {
+        	String totalsalary = JOptionPane.showInputDialog(this, "Enter number of %:");
+        	int ytr = Integer.parseInt(totalsalary);
+        	
+            for (EmployeesList city : citys) {
+                int salary = (int) city.getsalary();
+                city.getsalary();
+                int totalsalary1 = ytr / 100 * salary;
+            }
+            JOptionPane.showMessageDialog(this, "Success", "Success", JOptionPane.INFORMATION_MESSAGE);
+            
+        }
+
+        public static void main(String[] args) {
+        	ListApp app = new ListApp();
+            app.setVisible(true);
+        }
+        }
